@@ -1,0 +1,15 @@
+{
+  "name": "zerochan_dl",
+  "version": "1.0.0",
+  "description": "konachan image downloader",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "bin":{
+    "konachan_dl":"index.js"
+  },
+  "dependencies": {
+    "request": "^2.72.0"
+  },
+  "repository": "kotborealis/konachan_dl"
+}
