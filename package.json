@@ -1,6 +1,6 @@
 {
-  "name": "zerochan_dl",
-  "version": "1.0.0",
+  "name": "konachan_dl",
+  "version": "1.0.1",
   "description": "konachan image downloader",
   "main": "index.js",
   "author": "",

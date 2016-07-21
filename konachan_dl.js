@@ -3,7 +3,7 @@ const fs = require('fs');
 const request = require('request');
 
 function konachanPageImages(tag,page,cb){
-    const url = `http://konachan.com/post.json?tags=${tag}&page=${page}`;
+    const url = `http://konachan.net/post.json?tags=${tag}&page=${page}`;
     request(url,(err,res,body)=>{
         if(err || res.statusCode!== 200){
             throw new Error("Error loading page" + url);
