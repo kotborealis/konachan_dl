@@ -29,7 +29,7 @@ function konachanPageSaveImages(path,tag,page){
                     loop(i+1);
                 }
                 catch(e){
-                    const stream = request('http:' + images[i]).pipe(fs.createWriteStream(path+image_name));
+                    const stream = request('http:' + images[i]).pipe(fs.createWriteStream(path+image_name.replace(/"|'/g, '~')));
                     stream.on('finish',()=>loop(i+1));
                 }
             }
