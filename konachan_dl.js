@@ -4,6 +4,10 @@ const join_path = require('path').join;
 const request = require('request');
 const ProgressBar = require('progress');
 
+const cleanup = {
+    file_path: null
+};
+
 function konachanPageImages(tag, page, cb){
     const url = `http://konachan.net/post.json?tags=${tag}&page=${page}`;
     request(url, (err, res, body) => {
@@ -33,6 +37,7 @@ function konachanPageSaveImages(path, tag, page){
                     loop(i + 1);
                 }
                 catch(e){
+                    cleanup.file_path = file_path;
                     let progress;
                     const stream = request('http:' + image)
                         .on('response', res => {
@@ -46,6 +51,7 @@ function konachanPageSaveImages(path, tag, page){
                         .on('data', data => {
                             progress.tick(data.length);
                         })
+                        .on('end', () => cleanup.file_path = null)
                         .pipe(fs.createWriteStream(file_path));
                     stream.on('finish',() => loop(i + 1));
                 }
@@ -55,5 +61,17 @@ function konachanPageSaveImages(path, tag, page){
     };
     konachanPageImages(tag, page, cb);
 }
+
+const cleanup_handler = () => {
+    if(cleanup.file_path){
+        console.log('\nRemoving partially downloaded files before exit');
+        fs.unlink(cleanup.file_path, () => undefined);
+    }
+    process.exit();
+};
+
+process.on('beforeExit', cleanup_handler);
+process.on('SIGINT', cleanup_handler);
+process.on('uncaughtException', cleanup_handler);
 
 module.exports = konachanPageSaveImages;
