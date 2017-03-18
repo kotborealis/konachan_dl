@@ -2,6 +2,7 @@
 const fs = require('fs');
 const join_path = require('path').join;
 const request = require('request');
+const ProgressBar = require('progress');
 
 function konachanPageImages(tag, page, cb){
     const url = `http://konachan.net/post.json?tags=${tag}&page=${page}`;
@@ -24,15 +25,28 @@ function konachanPageSaveImages(path, tag, page){
             else{
                 const image = images[i];
                 const image_name = decodeURI(image.split('/').pop()).replace(/"|'/g, '~');
+                const file_path = join_path(`${path}/${image_name}`);
                 console.log(`[Page ${page}] Saving ${image_name}`);
                 try{
-                    fs.accessSync(path + image_name, fs.constants.F_OK);
+                    fs.accessSync(file_path, fs.constants.F_OK);
                     console.log(`[Page ${page}] ${image_name} already exists, skipping`);
                     loop(i + 1);
                 }
                 catch(e){
-                    const file_path = join_path(`${path}/${image_name}`);
-                    const stream = request('http:' + image).pipe(fs.createWriteStream(file_path));
+                    let progress;
+                    const stream = request('http:' + image)
+                        .on('response', res => {
+                            progress = new ProgressBar('[:bar] :etas', {
+                                complete: '=',
+                                incomplete: ' ',
+                                width: 20,
+                                total: parseInt(res.headers['content-length'])
+                            });
+                        })
+                        .on('data', data => {
+                            progress.tick(data.length);
+                        })
+                        .pipe(fs.createWriteStream(file_path));
                     stream.on('finish',() => loop(i + 1));
                 }
             }

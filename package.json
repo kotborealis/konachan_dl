@@ -5,10 +5,11 @@
   "main": "index.js",
   "author": "",
   "license": "ISC",
-  "bin":{
-    "konachan_dl":"index.js"
+  "bin": {
+    "konachan_dl": "index.js"
   },
   "dependencies": {
+    "progress": "^1.1.8",
     "request": "^2.72.0"
   },
   "repository": "kotborealis/konachan_dl"
